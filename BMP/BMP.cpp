@@ -257,21 +257,24 @@ void bmp_image::BlurNTimes(int n)
 	}
 }
 
-void bmp_image::crop(int y, int x, int height, int width)
+bmp_image bmp_image::crop(int y, int x, int height, int width)
 {
-	pixel* temp = new pixel[height * width];
+	bmp_image temp;
+	temp.header = new bmp_header();
+	*temp.header = *header;
+	temp.data = new pixel[height * width];
 	for (int i = 0; i < height; i++)
 	{
 		for (int j = 0; j < width; j++)
 		{
-			temp[(height-1-i) * width + j] = data[(header->height-1-(y + i)) *header->width  + x + j];
+			temp.data[(height-1-i) * width + j] = data[(header->height-1-(y + i)) *header->width  + x + j];
 		}
 
 	}
-	delete[] data;
-	data = temp;
-	header->height = height;
-	header->width = width;
+	 
+	temp.header->height = height;
+	temp.header->width = width;
+	return temp;
 }
 
 void bmp_image::scale(double coeff)
@@ -287,7 +290,7 @@ void bmp_image::scale(double coeff)
 		}
 
 	}
-	delete[] data;
+	delete[] this->data;
 	data = temp;
 	header->height = header->height*coeff;
 	header->width = header->width*coeff;
@@ -379,7 +382,7 @@ bool bmp_image:: readNumbersData(mapNumber* numbers)
 	int data[5];
 	while (getline(f, info))
 	{
-		//getInfoToNumber(data, info);
+		getInfoToNumber(data, info);
 		numbers[index].x = data[1];
 		numbers[index].y = data[2];
 		numbers[index].width = data[3];
@@ -389,8 +392,65 @@ bool bmp_image:: readNumbersData(mapNumber* numbers)
 	return true;
 }
 
+void bmp_image::putText(string text, double scale, int x, int y, int color)
+{
+	bmp_image sourceMap("numbers2.bmp");
+	mapNumber numbers[10];
+	readNumbersData(numbers);
+	const char* num = text.c_str();
+	const int coeffOfColor = 190;
+	mapNumber mapNum;
+	bmp_image current;
+	int colourPercent;
+	unsigned heightNum = 0;
+	unsigned widthNum = 0;
+	for (int k = 0; k < text.size(); ++k)
+	{
+		mapNum = numbers[num[k] - 48];
+		current = sourceMap.crop(mapNum.y,mapNum.x,mapNum.height,mapNum.width);
+		current.scale(scale);
+		int index = 0;
+		heightNum= current.header->height;
+		widthNum= current.header->width;
+	
+		for (int i = 0; i < heightNum; i++)
+		{
+			for (int j = 0; j < widthNum; j++)
+			{
+				if (current.data[( - 1 - i) *widthNum + j].blue > coeffOfColor)
+				{
+					index = (header->height - 1 - (y + i)) * header->width + x + j;
+					colourPercent = (int)round((current.data[(heightNum - 1 - i) * widthNum + j].blue ) / 255);
+					data[index] = *((pixel*)(&color));
+					if (colourPercent < 90)
+					{
+						data[index].blue *= colourPercent;
+						data[index].green *= colourPercent;
+						data[index].red *= colourPercent;
+					}
 
+				}
 
+			}
+		}
+
+		x += widthNum;
+	}
+}
+
+void bmp_image::getInfoToNumber(int* data, string info)
+{
+	regex r("(\\d+)");
+	int index = 0;
+	for (sregex_iterator i = std::sregex_iterator(info.begin(), info.end(), r);
+		i != sregex_iterator();
+		++i)
+	{
+		smatch m = *i;
+		data[index] = stoi(m[1].str().c_str());
+		++index;
+	}
+}
 void bmp_image::histogram(int* arr, int N)
 {
 	int length = (int)header->width / (2 * (N + 1));

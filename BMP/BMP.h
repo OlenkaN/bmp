@@ -97,9 +97,14 @@ public:
 	{
 		cout << "copy!!!!!" << "\n";
 		this->header = new bmp_header();
-		this->data = new pixel();
-		*this->header =* b.header;
-		*this->data = *b.data;
+		*this->header = *b.header;
+		this->data = new pixel[header->width * header->height];
+		for (int i = 0; i < header->width * header->height; ++i)
+		{
+
+			data[i] = b.data[i];
+
+		}
 		cout << header <<" "<< b.header<<"\n";
 		cout << data <<" "<< b.data<<"\n";
 
@@ -108,9 +113,14 @@ public:
 	{
 		cout << "=!!!!!"<<"\n";
 		this->header = new bmp_header();
-		this->data = new pixel();
 		*this->header = *b.header;
-		*this->data =* b.data;
+		this->data = new pixel[header->width * header->height];
+		for (int i = 0; i < header->width * header->height; ++i)
+		{
+
+			data[i] = b.data[i];
+
+		}
 		return *this;
 
 	}
@@ -119,7 +129,7 @@ public:
 		cout << "destr!!!!!" << "\n";
 		if (this->data != nullptr)
 		{
-			delete this->data;
+			delete [] this->data;
 			this->data = nullptr;
 		}
 		if (this->header != nullptr)
@@ -142,15 +152,15 @@ public:
 	void Blur();
 	void Sepia();
 	void BlurNTimes(int n);
-	void crop(int x, int y, int height, int weight);
+	bmp_image crop(int x, int y, int height, int weight);
 	void scale(double coeff);
 
 	void circle(int x, int y, int R, int color);
 	void circleNtimes(int color, int n);
 
 	bool  readNumbersData(mapNumber* numbers);
-	//void getInfoToNumber(int* data, string info);
-	//void putText(string text, double scale, int x, int y, int color);
+	void getInfoToNumber(int* data, string info);
+	void putText(string text, double scale, int x, int y, int color);
 	//pixel* cropAndScaleFromMap(bmp_image sourceMap, mapNumber num, double coeff);
 
 	void histogram(int* arr, int N);

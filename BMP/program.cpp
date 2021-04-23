@@ -17,16 +17,11 @@ void func(bmp_image test)
 
 int main(int argc, char* argv[])
 {
-	bmp_image test("lenna.bmp");
-	func(test);
-	test.write_bmp("lennaTest.bmp");
-     /*int color =0x00ff00;
-	 int* arrTest=statisticRubikscubeSum(10000);
+     int color =0x00ff00;
+	
 	 bmp_image test(1000,1000,color);
-	 test.histogram(arrTest, 13);
+	 test.putText("12", 0.7, 0, 0, 0x993366);
 	 test.write_bmp("text.bmp");
-	 //test.putText("12", 0.7, 0, 0, 0x993366);
-	 //test.write_bmp("text.bmp");*/
 	try
 	{
 		for (int i = 1; i < argc; ++i)
