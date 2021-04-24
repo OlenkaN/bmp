@@ -279,7 +279,6 @@ bmp_image bmp_image::crop(int y, int x, int height, int width)
 
 void bmp_image::scale(double coeff)
 {
-	cout << header->height * header->width * coeff * coeff;
 	pixel* temp = new pixel[header->height * header->width*coeff*coeff];
 	for ( int i = 0; i < (int)header->height*coeff; i++)
 	{
@@ -373,6 +372,74 @@ void bmp_image::circleNtimes(int color, int n)
 		a += delta;
 	}
 }
+void bmp_image::decresingLine(int x, int y, int x1, int y1, 
+	int color, int r, int a,int delta)
+{
+
+	int stopx1 = round((r-20) * cos((a+delta) * M_PI / 180.0)) + x;
+	int stopy1 = round((r-20) * sin((a+delta) * M_PI / 180.0)) + y;
+	int dx = fabs(x1 - stopx1);
+	int dy = fabs(y1 - stopy1);
+	double tang = (double)dy / dx;
+	int y2 = 0;
+	int x2 = x1;
+	if (x2 < stopx1)
+	{
+		while (x2 <= stopx1)
+		{
+			x2 += 1;
+			dx = fabs(x1 - x2);
+			y2 = (int)(y1 - tang * dx);
+			data[y2 * header->width + x2] = *((pixel*)(&color));
+		}
+	}
+	else
+	{
+		while (x2 >= stopx1)
+		{
+			x2 -= 1;
+			dx = fabs(x1 - x2);
+			y2 =(int)(y1- tang * dx);
+			data[y2 * header->width + x2] = *((pixel*)(&color));
+		}
+	}
+}
+void bmp_image::lineNtimes(int color, int n)
+{
+	int y = header->height / 2;
+	int x = header->width / 2;
+	int R = trunc(min(x, y) * 0.7);
+	int r = 0;
+	circle(x, y, R, color);
+	circle(x, y, R*0.8, color);
+	circle(x, y, R*0.9, color);
+	int x1, y1;
+	int a = 0;
+	int delta = 360 / n;
+	while (a < 360)
+	{
+		r = R;
+		x1 = round(R * cos(a * M_PI / 180.0)) + x;
+		y1 = round(R * sin(a * M_PI / 180.0)) + y;
+		while (r != 0)
+		{
+			--r;
+			if (r > R * 0.9 || r < R * 0.8)
+			{
+				x1 = round(r * cos(a * M_PI / 180.0)) + x;
+				y1 = round(r * sin(a * M_PI / 180.0)) + y;
+				data[y1 * header->width + x1] = *((pixel*)(&color));
+				if (r == R * 0.6)
+				{
+					decresingLine(x, y, x1, y1, color, r, a, delta);
+				}
+			}
+			
+
+		 }
+		a += delta;
+	}
+}
 
 bool bmp_image:: readNumbersData(mapNumber* numbers)
 {
@@ -408,7 +475,7 @@ void bmp_image::putText(string text, double scale, int x, int y, int color)
 	{
 		mapNum = numbers[num[k] - 48];
 		current = sourceMap.crop(mapNum.y,mapNum.x,mapNum.height,mapNum.width);
-		current.scale(scale);
+		//current.scale(scale);
 		int index = 0;
 		heightNum= current.header->height;
 		widthNum= current.header->width;
@@ -417,16 +484,16 @@ void bmp_image::putText(string text, double scale, int x, int y, int color)
 		{
 			for (int j = 0; j < widthNum; j++)
 			{
-				if (current.data[( - 1 - i) *widthNum + j].blue > coeffOfColor)
+				if (current.data[( heightNum- 1 - i) *widthNum + j].blue > coeffOfColor)
 				{
 					index = (header->height - 1 - (y + i)) * header->width + x + j;
-					colourPercent = (int)round((current.data[(heightNum - 1 - i) * widthNum + j].blue ) / 255);
+					colourPercent = (int)(round((current.data[(heightNum - 1 - i) * widthNum + j].blue ) / 255));
 					data[index] = *((pixel*)(&color));
-					if (colourPercent < 90)
+					if (colourPercent < 0.9)
 					{
-						data[index].blue *= colourPercent;
-						data[index].green *= colourPercent;
-						data[index].red *= colourPercent;
+						data[index].blue += data[index].blue*colourPercent;
+						data[index].green += data[index].green*colourPercent;
+						data[index].red += data[index].red*colourPercent;
 					}
 
 				}

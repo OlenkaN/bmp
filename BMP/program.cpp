@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
      int color =0x00ff00;
 	
 	 bmp_image test(1000,1000,color);
-	 test.putText("12", 0.7, 0, 0, 0x993366);
+	 test.lineNtimes (0x993366,10);
 	 test.write_bmp("text.bmp");
 	try
 	{

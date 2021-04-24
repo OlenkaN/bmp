@@ -44,6 +44,7 @@ struct pixel {
 	uint8_t green;
 	uint8_t red;
 	pixel(){}
+	~pixel(){}
 	pixel(uint8_t red, uint8_t green, uint8_t blue)
 	{
 		this->blue = blue;
@@ -157,7 +158,8 @@ public:
 
 	void circle(int x, int y, int R, int color);
 	void circleNtimes(int color, int n);
-
+	void lineNtimes(int color, int n);
+	void decresingLine(int x,int y,int x1,int y1,int color,int r ,int a,int delta);
 	bool  readNumbersData(mapNumber* numbers);
 	void getInfoToNumber(int* data, string info);
 	void putText(string text, double scale, int x, int y, int color);
