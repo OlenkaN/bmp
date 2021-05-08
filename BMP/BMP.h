@@ -166,33 +166,7 @@ public:
 
 	void fillSector(int startR, int endR,int x,int y, int color, double startDelta, double endDelta);
 
-	void printLine(int startX, int startY, int endX, int endY,int color)
-	{
-		if (startX > endX)
-		{
-			int temp = startX;
-			startX = endX;
-			endX = temp;
-			temp = startY;
-			startY = endY;
-			endY = temp;
-		}
-		double dx = fabs(startX - endX);
-		double dy = fabs(startY - endY);
-		double tang = dy / dx;
-		int coeff = startY < endY ? -1 : 1;
-		int y2 = 0;
-
-		double x2 = startX;
-		while (x2 < endX)
-			{
-				x2 += 0.05;
-				dx =  x2-startX;
-				y2 = (startY - coeff*tang*dx);
-				data[(int)((header->height-y2) * header->width + x2)] = *((pixel*)(&color));
-			}
-		
-	}
+	void printLine(int startX, int startY, int endX, int endY, int color);
 	void histogram(int* arr, int N);
 	void printOneColumn(int width, int y, int x, int color);
 private:
