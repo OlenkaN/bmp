@@ -372,50 +372,28 @@ void bmp_image::circleNtimes(int color, int n)
 		a += delta;
 	}
 }
-void bmp_image::decresingLine(int x, int y, int x1, int y1, 
-	int color, int r, int a,int delta)
-{
 
-	int stopx1 = round((r-20) * cos((a+delta) * M_PI / 180.0)) + x;
-	int stopy1 = round((r-20) * sin((a+delta) * M_PI / 180.0)) + y;
-	int dx = fabs(x1 - stopx1);
-	int dy = fabs(y1 - stopy1);
-	double tang = (double)dy / dx;
-	int y2 = 0;
-	int x2 = x1;
-	if (x2 < stopx1)
-	{
-		while (x2 <= stopx1)
-		{
-			x2 += 1;
-			dx = fabs(x1 - x2);
-			y2 = (int)(y1 - tang * dx);
-			data[y2 * header->width + x2] = *((pixel*)(&color));
-		}
-	}
-	else
-	{
-		while (x2 >= stopx1)
-		{
-			x2 -= 1;
-			dx = fabs(x1 - x2);
-			y2 =(int)(y1- tang * dx);
-			data[y2 * header->width + x2] = *((pixel*)(&color));
-		}
-	}
-}
 void bmp_image::lineNtimes(int color, int n)
 {
+	//center
 	int y = header->height / 2;
 	int x = header->width / 2;
 	int R = trunc(min(x, y) * 0.7);
 	int r = 0;
-	circle(x, y, R, color);
-	circle(x, y, R*0.8, color);
-	circle(x, y, R*0.9, color);
 	int x1, y1;
 	int a = 0;
 	int delta = 360 / n;
+	int stopX;
+	int stopY;
+	 int coeff = 1;
+	 int indicator = 2;
+	 
+	//main 3 circle
+	circle(x, y, R, color);
+	circle(x, y, R*0.8, color);
+	circle(x, y, R*0.9, color);
+	circle(x, y, R*0.1, color);
+
 	while (a < 360)
 	{
 		r = R;
@@ -424,19 +402,35 @@ void bmp_image::lineNtimes(int color, int n)
 		while (r != 0)
 		{
 			--r;
-			if (r > R * 0.9 || r < R * 0.8)
+			if (r > R * 0.9 || (r < R * 0.8 && r>R * 0.1))
 			{
+				//lines
 				x1 = round(r * cos(a * M_PI / 180.0)) + x;
 				y1 = round(r * sin(a * M_PI / 180.0)) + y;
 				data[y1 * header->width + x1] = *((pixel*)(&color));
-				if (r == R * 0.6)
+				if ((r == R * 0.7 || r == R * 0.5) && indicator == 2)
 				{
-					decresingLine(x, y, x1, y1, color, r, a, delta);
+
+					coeff = 1;
+					while (coeff > -2)
+					{
+						stopX = round((r * 0.9) * cos((a + coeff * delta) * M_PI / 180.0)) + x;
+						stopY = round((r * 0.9) * sin((a + coeff * delta) * M_PI / 180.0)) + y;
+						printLine(x1, y1, stopX, stopY, color);
+						coeff-=2;
+					}
+	 
 				}
 			}
-			
+
+			if (indicator == 2 && r == R * 0.4)
+			{
+				indicator = 0;
+			}
 
 		 }
+		++indicator;
+		
 		a += delta;
 	}
 }

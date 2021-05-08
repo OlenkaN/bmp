@@ -20,8 +20,9 @@ int main(int argc, char* argv[])
      int color =0x00ff00;
 	
 	 bmp_image test(1000,1000,color);
-	 test.lineNtimes (0x993366,10);
-	 test.write_bmp("text.bmp");
+	 test.lineNtimes(0xff0000, 80);
+	 
+	 test.write_bmp("line.bmp");
 	try
 	{
 		for (int i = 1; i < argc; ++i)
