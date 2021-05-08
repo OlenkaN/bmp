@@ -385,14 +385,15 @@ void bmp_image::lineNtimes(int color, int n)
 	int delta = 360 / n;
 	int stopX;
 	int stopY;
-	 int coeff = 1;
-	 int indicator = 2;
-	 
+	int coeff = 1;
+	int indicator = 2;
+
 	//main 3 circle
 	circle(x, y, R, color);
-	circle(x, y, R*0.8, color);
-	circle(x, y, R*0.9, color);
-	circle(x, y, R*0.1, color);
+	circle(x, y, R * 0.8, color);
+	circle(x, y, R * 0.9, color);
+	circle(x, y, R * 0.1, color);
+	fillSector(R, R * 0.9, x, y, 0xffffff, 0, 4.5);
 
 	while (a < 360)
 	{
@@ -408,7 +409,8 @@ void bmp_image::lineNtimes(int color, int n)
 				x1 = round(r * cos(a * M_PI / 180.0)) + x;
 				y1 = round(r * sin(a * M_PI / 180.0)) + y;
 				data[y1 * header->width + x1] = *((pixel*)(&color));
-				if ((r == R * 0.7 || r == R * 0.5) && indicator == 2)
+
+				if ((r == int(R * 0.7)|| r == int(R * 0.5)) && indicator == 2)
 				{
 
 					coeff = 1;
@@ -417,9 +419,9 @@ void bmp_image::lineNtimes(int color, int n)
 						stopX = round((r * 0.9) * cos((a + coeff * delta) * M_PI / 180.0)) + x;
 						stopY = round((r * 0.9) * sin((a + coeff * delta) * M_PI / 180.0)) + y;
 						printLine(x1, y1, stopX, stopY, color);
-						coeff-=2;
+						coeff -= 2;
 					}
-	 
+
 				}
 			}
 
@@ -428,13 +430,27 @@ void bmp_image::lineNtimes(int color, int n)
 				indicator = 0;
 			}
 
-		 }
+		}
 		++indicator;
-		
+
 		a += delta;
 	}
 }
+void bmp_image::fillSector(int startR,int endR,int x,int y, int color, double startDelta, double endDelta)
 
+{
+	int startX, startY, endX, endY;
+		
+	while (startDelta < endDelta-0.5)
+	{
+		startDelta+=0.05;
+		startX = round(startR * cos(startDelta * M_PI / 180.0)) + x;
+		startY = round(startR * sin(startDelta * M_PI / 180.0)) + y;
+		endX = round(endR * cos(startDelta * M_PI / 180.0)) + x;
+		endY = round(endR * sin(startDelta * M_PI / 180.0)) + y;
+		printLine(startX, startY, endX, endY, color);
+	}
+}
 bool bmp_image:: readNumbersData(mapNumber* numbers)
 {
 	ifstream f("mapForNumbers.txt");

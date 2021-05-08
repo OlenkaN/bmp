@@ -164,7 +164,7 @@ public:
 	void getInfoToNumber(int* data, string info);
 	void putText(string text, double scale, int x, int y, int color);
 
-
+	void fillSector(int startR, int endR,int x,int y, int color, double startDelta, double endDelta);
 
 	void printLine(int startX, int startY, int endX, int endY,int color)
 	{
