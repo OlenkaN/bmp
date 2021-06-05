@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BMP", "BMP\BMP.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Bytes", "Bytes\Bytes.vcxproj", "{407426B6-C2EE-476A-9562-BD818FFF6BB0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CSV", "CSV\CSV.vcxproj", "{AF7D15FA-13B7-463B-98B9-F31C087FC129}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{407426B6-C2EE-476A-9562-BD818FFF6BB0}.Release|x64.Build.0 = Release|x64
 		{407426B6-C2EE-476A-9562-BD818FFF6BB0}.Release|x86.ActiveCfg = Release|Win32
 		{407426B6-C2EE-476A-9562-BD818FFF6BB0}.Release|x86.Build.0 = Release|Win32
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Debug|x64.ActiveCfg = Debug|x64
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Debug|x64.Build.0 = Debug|x64
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Debug|x86.ActiveCfg = Debug|Win32
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Debug|x86.Build.0 = Debug|Win32
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Release|x64.ActiveCfg = Release|x64
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Release|x64.Build.0 = Release|x64
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Release|x86.ActiveCfg = Release|Win32
+		{AF7D15FA-13B7-463B-98B9-F31C087FC129}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,6 +6,8 @@
 #include <regex>
 #include <sstream>
 # define M_PI 3.14159265358979323846
+#define INF 10000
+
 using namespace std;
 class bmp_image;
 /**
@@ -74,6 +76,12 @@ struct mapNumber
 		this->height = height;
 		this->width = width;
 	}
+};
+
+struct Point
+{
+	double x;
+	double y;
 };
 /**
 * Structure describes the BMP file format, which consists from two parts:
@@ -165,6 +173,7 @@ public:
 	void putText(string text, double scale, int x, int y, int color);
 
 	void fillSector(int startR, int endR,int x,int y, int color, double startDelta, double endDelta);
+
 
 	void printLine(int startX, int startY, int endX, int endY, int color);
 	void histogram(int* arr, int N);
