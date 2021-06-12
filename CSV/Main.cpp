@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <fstream>
+#include <vector>
 #include <iostream>
 using namespace std;
 
@@ -33,23 +35,63 @@ int dates_increase(const void* d1, const void* d2)
     struct tm date_1 = *(const struct tm*)d1;
     struct tm date_2 = *(const struct tm*)d2;
     double d = difftime(mktime(&date_1), mktime(&date_2));
-    return (d < 0) - (d > 0);
+    return (d > 0) - (d < 0);
 }
+struct CSV
+{
+    string Partition, Project, Machine, CPUModel, NumofCPU, memory, flow, RunTime;
+    struct tm StartDate, FinishDate;
+};
 int main(void)
 {
+    fstream file;
+    file.open("test.csv", ios::in);
+    CSV temp;
+    string  StartDate, FinishDate;
+    vector<CSV> date;
+    const char* in_buffer;
+    const char* in_buffer1;
+        while (getline(file, temp.Partition, ',')) {
+
+            getline(file, temp.Project, ',');
+
+            getline(file, temp.Machine, ',');
+
+            getline(file, temp.CPUModel, ',');
+
+            getline(file, temp.NumofCPU, ',');
+
+            getline(file, temp.memory, ',');
+
+            getline(file, temp.flow, ',');
+
+            getline(file, temp.RunTime, ',');
+
+            getline(file, StartDate, ',');
+            in_buffer = StartDate.c_str();
+            memset(&temp.StartDate, 0, sizeof(struct tm));
+            strptime(in_buffer, "%a %b %d %T IST %Y", &temp.StartDate);
+
+
+            getline(file, FinishDate);
+            in_buffer1 = FinishDate.c_str();
+            memset(&temp.FinishDate, 0, sizeof(struct tm));
+            strptime(in_buffer1, "%a %b %d %T IST %Y", &temp.FinishDate);
+            date.push_back(temp);
+
+        }
    //struct tm my_tm;
-    struct tm testArray[3];
+    /*struct tm testArray[3];
     string test = "Thu Mar 11 21:04:09 IST 2021";
     const char* in_buffer = test.c_str();    
-     test = "Thu Mar 11 21:04:02 IST 2021";
-    const char* in_buffer1 = test.c_str();   
-    test = "Thu Mar 11 21:04:20 IST 2021";
-    const char* in_buffer2 = test.c_str();
+        string test1 = "Thu Mar 11 21:04:02 IST 2021";
+    const char* in_buffer1 = test1.c_str();   
+    string test2 = "Thu Mar 11 21:04:20 IST 2021";
+    const char* in_buffer2 = test2.c_str();
     char out_buffer[80];
         time_t t;
 
-    /* Convert the string to a struct tm. */
-      
+    /* Convert the string to a struct tm.     
             memset(&testArray[0], 0, sizeof(struct tm));
             strptime(in_buffer, "%a %b %d %T IST %Y", &testArray[0]);
             memset(&testArray[1], 0, sizeof(struct tm));
@@ -61,13 +103,13 @@ int main(void)
             qsort(testArray,3, sizeof * testArray, dates_increase);
 
     /* Convert the struct tm to a time_t (to fill in the
-     * missing fields). */
+     * missing fields). 
     t = mktime(&testArray[0]);
 
-    /* Convert the time back to a string. */
+    /* Convert the time back to a string. 
     strftime(out_buffer, 80, "That's %D (a %A), at %T",
         localtime(&t));
     printf("%s\n", out_buffer);
 
-    return EXIT_SUCCESS;
+    return EXIT_SUCCESS;*/
 }

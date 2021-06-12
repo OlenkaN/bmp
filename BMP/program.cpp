@@ -9,20 +9,20 @@ int* statisticRubikscubeSum(int n)
 	}
 	return sum;
 }
-void func(bmp_image test)
-{
-	test.blackAndWhite();
-	test.write_bmp("lennaFunc1.bmp");
-}
 
 int main(int argc, char* argv[])
 {
      int color =0x00ff00;
 	
 	 bmp_image test(1000,1000,color);
-	 test.lineNtimes(0xff0000, 80);
-	 
-	 test.write_bmp("line.bmp");
+	 Point polygon1[] = { {100, 100}, {200, 100}, {150, 300} };
+	 int n = sizeof(polygon1) / sizeof(polygon1[0]);
+	 test.printLine(100,100,200,100,0xff0000);
+	 test.printLine(100,100,150,300,0xff0000);
+	 test.printLine(200,100,150,300,0xff0000);
+	 test.fillPolygon(polygon1, n, 0x0000ff);
+	// test.lineNtimes(0xff0000, 80);
+	 test.write_bmp("polygon.bmp");
 	try
 	{
 		for (int i = 1; i < argc; ++i)

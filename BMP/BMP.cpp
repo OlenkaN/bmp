@@ -634,7 +634,7 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 	return false; 
 }
 
-// Returns true if the point p lies inside the polygon[] with n vertices
+
 bool isInside(Point polygon[], int n, Point p)
 {
 	// There must be at least 3 vertices in polygon[]
@@ -664,6 +664,42 @@ bool isInside(Point polygon[], int n, Point p)
 		i = next;
 	} while (i != 0);
 
-	// Return true if count is odd, false otherwise
 	return count & 1; 
+}
+void bmp_image::fillPolygon(Point polygon[], int n,int color)
+{
+	double maxX = INT16_MIN;
+	double maxY= INT16_MIN;
+	double minX = INT16_MAX;
+	double minY = INT16_MAX;
+	for (int i = 0; i < n; ++i)
+	{
+		if (polygon[i].x > maxX)
+		{
+			maxX = polygon[i].x;
+		}
+		if (polygon[i].y > maxY)
+		{
+			maxY = polygon[i].y;
+		}if (polygon[i].x < minX)
+		{
+			minX = polygon[i].x;
+		}if (polygon[i].y < minY)
+		{
+			minY= polygon[i].y;
+		}
+	}
+	for (; minY < maxY; ++minY)
+	{
+		for (double min=minX; min < maxX; ++min)
+		{
+			if (isInside(polygon, n, Point{ min,minY }))
+			{
+				data[(int)((header->height - minY) * header->width + min)] = *((pixel*)(&color));
+			}
+		}
+	}
+
+
+
 }

@@ -82,6 +82,14 @@ struct Point
 {
 	double x;
 	double y;
+	Point()
+	{
+	}
+	Point(double x, double y)
+	{
+		this->x = x;
+		this->y = y;
+	}
 };
 /**
 * Structure describes the BMP file format, which consists from two parts:
@@ -173,6 +181,7 @@ public:
 	void putText(string text, double scale, int x, int y, int color);
 
 	void fillSector(int startR, int endR,int x,int y, int color, double startDelta, double endDelta);
+	void fillPolygon(Point polygon[], int n, int color);
 
 
 	void printLine(int startX, int startY, int endX, int endY, int color);
