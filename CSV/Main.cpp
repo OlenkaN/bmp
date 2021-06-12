@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 extern "C" char* strptime(const char* s,
@@ -30,18 +31,19 @@ extern "C" char* strptime(const char* s,
     }
     return (char*)(s + input.tellg());
 }
-int dates_increase(const void* d1, const void* d2)
-{
-    struct tm date_1 = *(const struct tm*)d1;
-    struct tm date_2 = *(const struct tm*)d2;
-    double d = difftime(mktime(&date_1), mktime(&date_2));
-    return (d > 0) - (d < 0);
-}
+
 struct CSV
 {
     string Partition, Project, Machine, CPUModel, NumofCPU, memory, flow, RunTime;
     struct tm StartDate, FinishDate;
 };
+bool dates_increase(const CSV& d1, const CSV& d2)
+{
+    struct tm date_1 =d1.StartDate;
+    struct tm date_2 = d2.StartDate;
+    double d = difftime(mktime(&date_1), mktime(&date_2));
+    return d > 0;
+}
 int main(void)
 {
     fstream file;
@@ -80,6 +82,8 @@ int main(void)
             date.push_back(temp);
 
         }
+        sort(date.begin(), date.end(), dates_increase);
+        cout << date[0].Project;
    //struct tm my_tm;
     /*struct tm testArray[3];
     string test = "Thu Mar 11 21:04:09 IST 2021";
