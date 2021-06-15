@@ -36,14 +36,24 @@ struct CSV
 {
     string Partition, Project, Machine, CPUModel, NumofCPU, memory, flow, RunTime;
     struct tm StartDate, FinishDate;
+    double CalcStartTime = 0;
 };
+double difference(const CSV& d1, const CSV& d2)
+{
+    struct tm date_1 = d1.StartDate;
+    struct tm date_2 = d2.StartDate;
+    return difftime(mktime(&date_1), mktime(&date_2));
+}
 bool dates_increase(const CSV& d1, const CSV& d2)
 {
-    struct tm date_1 =d1.StartDate;
-    struct tm date_2 = d2.StartDate;
-    double d = difftime(mktime(&date_1), mktime(&date_2));
-    return d > 0;
+    if (d1.RunTime == "Aborted")
+        return false;
+    if (d2.RunTime == "Aborted")
+        return true;
+
+    return difference(d1,d2) < 0;
 }
+
 int main(void)
 {
     fstream file;
@@ -84,6 +94,14 @@ int main(void)
         }
         sort(date.begin(), date.end(), dates_increase);
         cout << date[0].Project;
+        for (int i = 1; i < date.size(); ++i)
+        {
+            if (date[i].RunTime != "Aborted")
+            {
+                date[i].CalcStartTime = difference(date[i], date[0]);
+            }
+        }
+
    //struct tm my_tm;
     /*struct tm testArray[3];
     string test = "Thu Mar 11 21:04:09 IST 2021";
