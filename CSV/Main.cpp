@@ -105,17 +105,28 @@ public:
     void countDuration()
     {
         time_t CalcStart, sec;
+        double diff;
         for (int i = 0; i < date.size(); ++i)
         {
             if (date[i].RunTime != "Aborted")
             {
-                //CalcStart = differenceStart(date[i], date[0]);
+               /* //CalcStart = differenceStart(date[i], date[0]);
                 date[i].CalcStartTime = localtime(new time_t(differenceStart(date[i], date[0])));
                 //sec = differenceDur(date[i]);
-                date[i].Duration = localtime(new time_t(differenceDur(date[i])));
+                date[i].Duration = localtime(new time_t(differenceDur(date[i])));*/
+                diff=differenceStart(date[i], date[0]);
             }
         }
 
+    }
+    void secTohours(int total)
+    {
+        int  seconds, hours, minutes;
+        minutes = total / 60;
+        seconds = total % 60;
+        hours = minutes / 60;
+        minutes = minutes % 60;
+        return "" + hours + "" + minutes + ":" + seconds;
     }
 
     double differenceDur(const CSV& d1)
