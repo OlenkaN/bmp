@@ -36,33 +36,21 @@ struct CSV
 {
     string Partition, Project, Machine, CPUModel, NumofCPU, memory, flow, RunTime;
     struct tm StartDate, FinishDate;
-    double CalcStartTime = 0;
+    struct tm* CalcStartTime;
+    struct tm* Duration ;
 };
-double difference(const CSV& d1, const CSV& d2)
+class csvDates
 {
-    struct tm date_1 = d1.StartDate;
-    struct tm date_2 = d2.StartDate;
-    return difftime(mktime(&date_1), mktime(&date_2));
-}
-bool dates_increase(const CSV& d1, const CSV& d2)
-{
-    if (d1.RunTime == "Aborted")
-        return false;
-    if (d2.RunTime == "Aborted")
-        return true;
-
-    return difference(d1,d2) < 0;
-}
-
-int main(void)
-{
-    fstream file;
-    file.open("test.csv", ios::in);
-    CSV temp;
-    string  StartDate, FinishDate;
     vector<CSV> date;
-    const char* in_buffer;
-    const char* in_buffer1;
+public:
+    void readCSV(string fileName)
+    {
+        fstream file;
+        file.open("test.csv", ios::in);
+        CSV temp;
+        string  StartDate, FinishDate;
+        const char* in_buffer;
+        const char* in_buffer1;
         while (getline(file, temp.Partition, ',')) {
 
             getline(file, temp.Project, ',');
@@ -93,16 +81,98 @@ int main(void)
 
         }
         sort(date.begin(), date.end(), dates_increase);
-        cout << date[0].Project;
-        for (int i = 1; i < date.size(); ++i)
+        
+    }
+    /*void sortCSV()
+    {
+        sort(date.begin(), date.end(),csvDates:: dates_increase);
+    }*/
+    void countDuration()
+    {
+        time_t elapsedSec;
+        for (int i = 0; i < date.size(); ++i)
         {
             if (date[i].RunTime != "Aborted")
             {
-                date[i].CalcStartTime = difference(date[i], date[0]);
+                elapsedSec = differenceStart(date[i], date[0]);
+                date[i].CalcStartTime = gmtime(&elapsedSec); 
+                elapsedSec = differenceDur(date[i]);
+                date[i].Duration = gmtime(&elapsedSec);
             }
         }
 
-   //struct tm my_tm;
+    }
+    double differenceStart(const CSV& d1, const CSV& d2)
+    {
+        struct tm date_1 = d1.StartDate;
+        struct tm date_2 = d2.StartDate;
+        return difftime(mktime(&date_1), mktime(&date_2));
+    }
+    double differenceDur(const CSV& d1)
+    {
+        struct tm date_1 = d1.StartDate;
+        struct tm date_2 = d1.FinishDate;
+        return difftime(mktime(&date_1), mktime(&date_2));
+    }
+    bool dates_increase(const CSV& d1, const CSV& d2)
+    {
+        if (d1.RunTime == "Aborted")
+            return false;
+        if (d2.RunTime == "Aborted")
+            return true;
+
+        return differenceStart(d1, d2) < 0;
+    }
+    void printIntoCSV(string fileName)
+    {
+        fstream fout;
+        char out_buffer[80];
+        time_t t;
+
+        fout.open("reportcard.csv", ios::out | ios::app);
+        for (int i = 0; i < date.size(); ++i)
+        {
+            fout << date[i].Partition << ","
+                << date[i].Project << ","
+                << date[i].Machine << ","
+                << date[i].CPUModel << ","
+                << date[i].NumofCPU << ","
+                << date[i].memory << ","
+                << date[i].flow << ","
+                << date[i].RunTime << ",";
+            t = mktime(&date[i].StartDate);
+            strftime(out_buffer, 80, " % a % b % d % T IST % Y",
+                localtime(&t));
+            fout << out_buffer << ",";
+            t = mktime(&date[i].FinishDate);
+            strftime(out_buffer, 80, " % a % b % d % T IST % Y",
+                localtime(&t));
+            fout << out_buffer << ","; 
+            t = mktime(date[i].CalcStartTime);
+            strftime(out_buffer, 80, " % T ",
+                localtime(&t));
+            fout << out_buffer << ",";
+            t = mktime(date[i].Duration);
+            strftime(out_buffer, 80, " % T ",
+                localtime(&t));
+            fout << out_buffer << "\n";
+
+
+        }
+    }
+
+};
+
+
+int main(void)
+{
+    
+    csvDates temp;
+    temp.readCSV("");
+    //temp.sortCSV();
+    temp.countDuration();
+    temp.printIntoCSV("");
+    //struct tm my_tm;
     /*struct tm testArray[3];
     string test = "Thu Mar 11 21:04:09 IST 2021";
     const char* in_buffer = test.c_str();    
