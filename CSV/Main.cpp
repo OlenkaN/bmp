@@ -39,6 +39,21 @@ struct CSV
     struct tm* CalcStartTime;
     struct tm* Duration ;
 };
+double differenceStart(const CSV& d1, const CSV& d2)
+{
+    struct tm date_1 = d1.StartDate;
+    struct tm date_2 = d2.StartDate;
+    return difftime(mktime(&date_1), mktime(&date_2));
+}
+bool dates_increase(const CSV& d1, const CSV& d2)
+{
+    if (d1.RunTime == "Aborted")
+        return false;
+    if (d2.RunTime == "Aborted")
+        return true;
+
+    return differenceStart(d1, d2) < 0;
+}
 class csvDates
 {
     vector<CSV> date;
@@ -89,44 +104,31 @@ public:
     }*/
     void countDuration()
     {
-        time_t elapsedSec;
+        time_t CalcStart, sec;
         for (int i = 0; i < date.size(); ++i)
         {
             if (date[i].RunTime != "Aborted")
             {
-                elapsedSec = differenceStart(date[i], date[0]);
-                date[i].CalcStartTime = gmtime(&elapsedSec); 
-                elapsedSec = differenceDur(date[i]);
-                date[i].Duration = gmtime(&elapsedSec);
+                //CalcStart = differenceStart(date[i], date[0]);
+                date[i].CalcStartTime = localtime(new time_t(differenceStart(date[i], date[0])));
+                //sec = differenceDur(date[i]);
+                date[i].Duration = localtime(new time_t(differenceDur(date[i])));
             }
         }
 
     }
-    double differenceStart(const CSV& d1, const CSV& d2)
-    {
-        struct tm date_1 = d1.StartDate;
-        struct tm date_2 = d2.StartDate;
-        return difftime(mktime(&date_1), mktime(&date_2));
-    }
+
     double differenceDur(const CSV& d1)
     {
-        struct tm date_1 = d1.StartDate;
-        struct tm date_2 = d1.FinishDate;
+        struct tm date_2 = d1.StartDate;
+        struct tm date_1 = d1.FinishDate;
         return difftime(mktime(&date_1), mktime(&date_2));
     }
-    bool dates_increase(const CSV& d1, const CSV& d2)
-    {
-        if (d1.RunTime == "Aborted")
-            return false;
-        if (d2.RunTime == "Aborted")
-            return true;
 
-        return differenceStart(d1, d2) < 0;
-    }
     void printIntoCSV(string fileName)
     {
         fstream fout;
-        char out_buffer[80];
+        char out_buffer[120];
         time_t t;
 
         fout.open("reportcard.csv", ios::out | ios::app);
@@ -141,24 +143,33 @@ public:
                 << date[i].flow << ","
                 << date[i].RunTime << ",";
             t = mktime(&date[i].StartDate);
-            strftime(out_buffer, 80, " % a % b % d % T IST % Y",
+            strftime(out_buffer, 120, "%a %b %d %T IST %Y",
                 localtime(&t));
             fout << out_buffer << ",";
-            t = mktime(&date[i].FinishDate);
-            strftime(out_buffer, 80, " % a % b % d % T IST % Y",
-                localtime(&t));
-            fout << out_buffer << ","; 
-            t = mktime(date[i].CalcStartTime);
-            strftime(out_buffer, 80, " % T ",
-                localtime(&t));
-            fout << out_buffer << ",";
-            t = mktime(date[i].Duration);
-            strftime(out_buffer, 80, " % T ",
-                localtime(&t));
-            fout << out_buffer << "\n";
+            if (date[i].RunTime != "Aborted")
+            {
+                
+                t = mktime(&date[i].FinishDate);
+                strftime(out_buffer, 120, "%a %b %d %T IST %Y",
+                    localtime(&t));
+                fout << out_buffer << ",";
+                t = mktime(date[i].CalcStartTime);
+                strftime(out_buffer, 120, "%T",
+                    localtime(&t));
+                fout << out_buffer << ",";
+                t = mktime(date[i].Duration);
+                strftime(out_buffer, 120, "%T",
+                    localtime(&t));
+                fout << out_buffer << "\n";
+            }
+            else
+            {
+                fout << "Failed,Failed,0\n";
+            }
 
 
         }
+        fout.close();
     }
 
 };
